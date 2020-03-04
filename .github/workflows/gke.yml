@@ -7,9 +7,7 @@ on:
     - master
 
 # Environment variables available to all jobs and steps in this workflow
-env:
-  TEMP: master
-  GKE_PROJECT: ${{ secrets.${{TEMP}}_GKE_PROJECT }}
+
   
 jobs:
   build:
@@ -18,11 +16,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    
+    - name: env setup
+      if: GITHUB_BRNACH ==  "master"
+      env:
+        GKE_PROJECT: ${{ secrets.MASTER_GKE_PROJECT }}
 
     - name: Run a multi-line script
       run: |
         echo $GKE_PROJECT
-        echo $GKE_CLUSTER
 
 #jobs:
 #  setup-build-publish-deploy:
