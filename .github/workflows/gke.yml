@@ -41,6 +41,7 @@ jobs:
         export_default_credentials: true
 
     - name: Switch Cluster if Dev
+      uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
       if: github.ref == 'refs/heads/develop'
       with:
         version: '270.0.0'
