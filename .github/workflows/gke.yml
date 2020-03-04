@@ -32,11 +32,13 @@ jobs:
     # Build the Docker image
     - name: Build
       run: |
-        docker build -t vincentngai86/github_action/$IMAGE:$GITHUB_SHA \
+        docker build -t vincentngai86/github_action/$GKE_PROJECT-$IMAGE:$GITHUB_SHA \
           --build-arg GITHUB_SHA="$GITHUB_SHA" \
           --build-arg GITHUB_REF="$GITHUB_REF" .
-
-
+           
+    - name: Publish
+      run: |
+        docker push gcr.io/$GKE_PROJECT/$IMAGE:$GITHUB_SHA
 #jobs:
 #  setup-build-publish-deploy:
 #    name: Setup, Build, Publish, and Deploy
