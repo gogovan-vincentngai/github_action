@@ -15,12 +15,14 @@ jobs:
     steps:
     - name: Export ENV Prod
       if: contains(github.ref, 'refs/heads/master')
+      run: |
           echo "::set-env name=GKE_PROJECT::${{ secrets.MASTER_GKE_PROJECT }}"
           echo "::set-env name=GKE_CLUSTER::${{ secrets.MASTER_GKE_CLUSTER }}"
           echo "::set-env name=GKE_REGION::${{ secrets.MASTER_GKE_REGION }}"
 
     - name: Export ENV DEV
       if: contains(github.ref, 'refs/heads/develop')
+      run: |
           echo "::set-env name=GKE_PROJECT::${{ secrets.DEV_GKE_PROJECT }}"
           echo "::set-env name=GKE_CLUSTER::${{ secrets.DEV_GKE_CLUSTER }}"
           echo "::set-env name=GKE_REGION::${{ secrets.DEV_GKE_REGION }}"
