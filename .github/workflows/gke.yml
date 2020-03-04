@@ -14,23 +14,13 @@ jobs:
     runs-on: [ubuntu-latest]
     steps:
     - name: Export ENV Prod
-      run: echo hellow
-      if: github.ref == 'refs/heads/master'
-      env:
-        CLOUDSDK_PYTHON_SITEPACKAGES: 1
-        GKE_PROJECT: ${{ secrets.MASTER_GKE_PROJECT }}
-        GKE_CLUSTER: ${{ secrets.MASTER_GKE_CLUSTER }}
-        GKE_REGION: ${{ secrets.MASTER_GKE_REGION }}
-      
-    - name: Export ENV Dev
-      run: echo hellow
-      if: github.ref == 'refs/heads/develop'
-      env:
-        CLOUDSDK_PYTHON_SITEPACKAGES: 1
-        GKE_PROJECT: ${{ secrets.DEV_GKE_PROJECT }}
-        GKE_CLUSTER: ${{ secrets.DEV_GKE_CLUSTER }}
-        GKE_REGION: ${{ secrets.DEV_GKE_REGION }}
-
+      run: |
+        if ${{github.ref}} == 'refs/heads/master' then
+        echo ::set-env name=GKE_PROJECT::${{ secrets.MASTER_GKE_PROJECT }}
+        echo ::set-env name=GKE_CLUSTER::${{ secrets.MASTER_GKE_CLUSTER }}
+        echo ::set-env name=GKE_REGION::${{ secrets.MASTER_GKE_REGION }}
+        
+          
     - name: Switch Cluster if Prod
       uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
       if: github.ref == 'refs/heads/master'
