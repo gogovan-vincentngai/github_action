@@ -15,6 +15,6 @@ jobs:
     runs-on: [ubuntu-latest]
     steps:
     - name: sed
-      run: sed -ie "s/\s\simage:.*/\s\simage:\svincentngai86\/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA/g" deployment.yaml
+      run: sed -ie "s/\s\simage:.*/\s\simage:\svincentngai86\/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA/g" ./deployment.yaml
 
     
