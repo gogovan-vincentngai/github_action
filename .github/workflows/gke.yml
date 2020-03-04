@@ -75,11 +75,11 @@ jobs:
 
     - name: Insert Secert
       run: |
-        kubectl create secret docker-registry ggvdockerhub \
-        --docker-server=docker.io \
-        --docker-username=$DOCKER_HUB_USER \
-        --docker-password=$DOCKER_HUB_PASSWORD \
-        --docker-email=$DOCKER_HUB_EMAIL \
+        kubectl create secret docker-registry ggvdockerhub \\
+        --docker-server=docker.io \\
+        --docker-username=$DOCKER_HUB_USER \\
+        --docker-password=$DOCKER_HUB_PASSWORD \\
+        --docker-email=$DOCKER_HUB_EMAIL \\
         --namespace $DEPLOY_NAMESPACE
 
     - name: Deploy 
