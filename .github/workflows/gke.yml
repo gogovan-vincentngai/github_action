@@ -33,8 +33,8 @@ jobs:
     - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
       with:
         version: '270.0.0'
-        service_account_email: ${{ secrets.MASTER_SA_EMAIL }} #$GKE_SA
-        service_account_key: ${{ secrets.MASTER_GOOGLE_APPLICATION_CREDENTIALS }} #$GKE_ACC_KEY
+        service_account_email: "$GKE_SA" #${{ secrets.MASTER_SA_EMAIL }} 
+        service_account_key: "$GKE_ACC_KEY" #${{ secrets.MASTER_GOOGLE_APPLICATION_CREDENTIALS }} #
     
     - run: |
         gcloud auth configure-docker    
@@ -42,7 +42,7 @@ jobs:
     - name: Docker Build
       run: |
         docker login -u ${{ secrets.DOCKER_HUB_USER }} -p ${{ secrets.DOCKER_HUB_PASSWORD}}
-        docker build -t vincentngai86/github_action:$GKE_PROJECT-$IMAGE-GITHUB_SHA \
+        docker build -t vincentngai86/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA \
           --build-arg GITHUB_SHA="$GITHUB_SHA" \
           --build-arg GITHUB_REF="$GITHUB_REF" .
         docker push vincentngai86/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA
