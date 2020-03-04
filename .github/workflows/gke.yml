@@ -14,7 +14,12 @@ jobs:
   build:
     runs-on: [ubuntu-latest]
     steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      
     - name: sed
-      run: sed -ie "s/\s\simage:.*/\s\simage:\svincentngai86\/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA/g" ./deployment.yaml
+      run: |
+        ls -la
+        sed -ie "s/\s\simage:.*/\s\simage:\svincentngai86\/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA/g" deployment.yaml
 
     
