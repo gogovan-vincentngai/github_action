@@ -8,8 +8,7 @@ on:
 
 # Environment variables available to all jobs and steps in this workflow
 env:
-  SE_PROJECT: $(GITHUB_BRANCH)_GKE_PROJECT
-  GKE_PROJECT: ${{ secrets.$(GITHUB_BRANCH)_GKE_PROJECT }}
+  GKE_PROJECT: ${{ secrets.${GITHUB_BRANCH}_GKE_PROJECT }}
   
 jobs:
   build:
