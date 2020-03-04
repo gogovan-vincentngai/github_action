@@ -18,7 +18,7 @@ spec:
       - name: gke-test
         image: vincentngai86/github_action:gogovan-dev-f3dc6-test-GITHUB_SHA
         ports:
-        - containerPort: 5000
+        - containerPort: 80
         resources:
           requests:
             cpu: 100m
