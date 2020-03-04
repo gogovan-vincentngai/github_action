@@ -15,10 +15,11 @@ jobs:
     steps:
     - name: Export ENV Prod
       run: |
-        if ${{github.ref}} == 'refs/heads/master' then
+        if [ ${{github.ref}} == 'refs/heads/master' ] then
         echo ::set-env name=GKE_PROJECT::${{ secrets.MASTER_GKE_PROJECT }}
         echo ::set-env name=GKE_CLUSTER::${{ secrets.MASTER_GKE_CLUSTER }}
         echo ::set-env name=GKE_REGION::${{ secrets.MASTER_GKE_REGION }}
+        fi
         
           
     - name: Switch Cluster if Prod
