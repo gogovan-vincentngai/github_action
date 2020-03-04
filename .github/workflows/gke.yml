@@ -14,65 +14,9 @@ jobs:
   build:
     runs-on: [ubuntu-latest]
     steps:
-    - name: Export ENV Prod
-      if: contains(github.ref, 'refs/heads/master')
-      run: |
-          echo "::set-env name=GKE_PROJECT::${{ secrets.MASTER_GKE_PROJECT }}"
-          echo "::set-env name=GKE_CLUSTER::${{ secrets.MASTER_GKE_CLUSTER }}"
-          echo "::set-env name=GKE_REGION::${{ secrets.MASTER_GKE_REGION }}"
-
-    - name: Export ENV DEV
-      if: contains(github.ref, 'refs/heads/develop')
-      run: |
-          echo "::set-env name=GKE_PROJECT::${{ secrets.DEV_GKE_PROJECT }}"
-          echo "::set-env name=GKE_CLUSTER::${{ secrets.DEV_GKE_CLUSTER }}"
-          echo "::set-env name=GKE_REGION::${{ secrets.DEV_GKE_REGION }}"
-                 
-    - name: Switch Cluster if Prod
-      uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
-      if: github.ref == 'refs/heads/master'
-      with:
-        version: '270.0.0'
-        service_account_email: ${{ secrets.MASTER_SA_EMAIL }} 
-        service_account_key: ${{ secrets.MASTER_GOOGLE_APPLICATION_CREDENTIALS }} 
-        export_default_credentials: true
-
-    - name: Switch Cluster if Dev
-      uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
-      if: github.ref == 'refs/heads/develop'
-      with:
-        version: '270.0.0'
-        service_account_email: ${{ secrets.MASTER_SA_EMAIL }} 
-        service_account_key: ${{ secrets.MASTER_GOOGLE_APPLICATION_CREDENTIALS }} 
-        export_default_credentials: true
-
-    - name: Checkout
-      uses: actions/checkout@v2
-
-    - name: Docker Build
-      run: |
-        docker login -u ${{ secrets.DOCKER_HUB_USER }} -p ${{ secrets.DOCKER_HUB_PASSWORD}}
-        docker build -t vincentngai86/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA \
-          --build-arg GITHUB_SHA="$GITHUB_SHA" \
-          --build-arg GITHUB_REF="$GITHUB_REF" .
-        docker push vincentngai86/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA
-      
     - name: modify deployment image
       uses: lefherz/action-sed@master
       with:
-       args: sed -ie "s/^        image:.*/        image:\ vincentngai86\/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA/g" deployment.yaml
+       args: sed -ie "s/\s\simage:.*/\s\simage:\svincentngai86\/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA/g" deployment.yaml
 
-    - name: Get GKE
-      run: |
-        gcloud auth configure-docker 
-        gcloud info
-        gcloud container clusters get-credentials $GKE_CLUSTER --region $GKE_REGION --project $GKE_PROJECT   
-        
-    - name: Get Cluster 
-      run: |
-        kubectl get ns
-        kubectl cluster-info
-
-
-    
     
