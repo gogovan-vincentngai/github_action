@@ -40,4 +40,9 @@ jobs:
         docker build -t vincentngai86/github_action:$GKE_PROJECT-$IMAGE-GITHUB_SHA \
           --build-arg GITHUB_SHA="$GITHUB_SHA" \
           --build-arg GITHUB_REF="$GITHUB_REF" .
-        docker push vincentngai86/github_action:$GKE_PROJECT-$IMAGE-GITHUB_SHA
+        docker push vincentngai86/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA
+      
+    - name: modify image tag
+      run: |
+        sed  -i -e "s/^  image: .*/  image: vincentngai86/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA/g" deployment.yaml
+        cat deployment.yaml | grep image
