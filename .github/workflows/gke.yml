@@ -24,30 +24,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+  
     - name: install python-openssl
       run: sudo apt-get install -y python-openssl -o=Dpkg::Use-Pty=0
-      
+    
     - name: Checkout
       uses: actions/checkout@v2    
-
-    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+    
+    - name: Switch Cluster if Prod
+      uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      if: github.ref == 'refs/heads/master'
       with:
         version: '270.0.0'
-        service_account_email: "$GKE_SA" #${{ secrets.MASTER_SA_EMAIL }} 
-        service_account_key: "$GKE_ACC_KEY" #${{ secrets.MASTER_GOOGLE_APPLICATION_CREDENTIALS }} #
-    
-    - run: |
-        gcloud auth configure-docker    
-        
-    - name: Docker Build
-      run: |
-        docker login -u ${{ secrets.DOCKER_HUB_USER }} -p ${{ secrets.DOCKER_HUB_PASSWORD}}
-        docker build -t vincentngai86/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA \
-          --build-arg GITHUB_SHA="$GITHUB_SHA" \
-          --build-arg GITHUB_REF="$GITHUB_REF" .
-        docker push vincentngai86/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA
+        service_account_email: ${{ secrets.MASTER_SA_EMAIL }} 
+        service_account_key: ${{ secrets.MASTER_GOOGLE_APPLICATION_CREDENTIALS }} 
+        export_default_credentials: true
+
+    - name: Switch Cluster if Dev
+      if: github.ref == 'refs/heads/develop'
+      with:
+        version: '270.0.0'
+        service_account_email: ${{ secrets.MASTER_SA_EMAIL }} 
+        service_account_key: ${{ secrets.MASTER_GOOGLE_APPLICATION_CREDENTIALS }} 
+        export_default_credentials: true
       
-    - name: modify image tag
-      run: |
-        sed  -i -e "s/^  image: .*/  image: vincentngai86/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA/g" deployment.yaml
-        cat deployment.yaml | grep image
+    - run: |
+        gcloud auth configure-docker 
+        gcloud info   
+        
+    
