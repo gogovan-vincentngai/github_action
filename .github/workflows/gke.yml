@@ -19,7 +19,7 @@ jobs:
       
     - name: sed
       run: |
-        ls -la
         sed -ie "s/\s\simage:.*/\s\simage:\svincentngai86\/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA/g" deployment.yaml
+        cat deployment.yaml
 
     
