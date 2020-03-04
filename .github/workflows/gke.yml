@@ -15,9 +15,19 @@ jobs:
     steps:
     - name: Export ENV Prod
       run: |
-        echo "::set-env name=GKE_PROJECT::${{ secrets.MASTER_GKE_PROJECT }}"
-        echo "::set-env name=GKE_CLUSTER::${{ secrets.MASTER_GKE_CLUSTER }}"
-        echo "::set-env name=GKE_REGION::${{ secrets.MASTER_GKE_REGION }}"
+        case ${{github.ref}} in
+        *master)
+          echo "::set-env name=GKE_PROJECT::${{ secrets.MASTER_GKE_PROJECT }}"
+          echo "::set-env name=GKE_CLUSTER::${{ secrets.MASTER_GKE_CLUSTER }}"
+          echo "::set-env name=GKE_REGION::${{ secrets.MASTER_GKE_REGION }}"
+          ;;
+        *develop)
+          echo "::set-env name=GKE_PROJECT::${{ secrets.DEV_GKE_PROJECT }}"
+          echo "::set-env name=GKE_CLUSTER::${{ secrets.DEV_GKE_CLUSTER }}"
+          echo "::set-env name=GKE_REGION::${{ secrets.DEV_GKE_REGION }}"
+          ;;
+        *)
+          ;;
         
           
     - name: Switch Cluster if Prod
