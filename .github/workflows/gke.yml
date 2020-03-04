@@ -14,9 +14,7 @@ jobs:
   build:
     runs-on: [ubuntu-latest]
     steps:
-    - name: modify deployment image
-      uses: lefherz/action-sed@master
-      with:
-       args: sed -ie "s/\s\simage:.*/\s\simage:\svincentngai86\/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA/g" deployment.yaml
+    - name: sed
+      run: sed -ie "s/\s\simage:.*/\s\simage:\svincentngai86\/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA/g" deployment.yaml
 
     
