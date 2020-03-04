@@ -18,7 +18,7 @@ jobs:
     - uses: actions/checkout@v2
     
     - name: env setup
-      if: GITHUB_BRNACH ==  "master"
+      if: github.ref == 'refs/heads/master'
       run: |
          echo hello
       env:
