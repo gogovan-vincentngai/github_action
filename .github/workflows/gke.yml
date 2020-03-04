@@ -17,7 +17,7 @@ jobs:
       run: |
         echo "::set-env name=GKE_PROJECT::${{ secrets.MASTER_GKE_PROJECT }}"
         echo "::set-env name=GKE_CLUSTER::${{ secrets.MASTER_GKE_CLUSTER }}"
-        echo "::set-envset-env name=GKE_REGION::${{ secrets.MASTER_GKE_REGION }}"
+        echo "::set-env name=GKE_REGION::${{ secrets.MASTER_GKE_REGION }}"
         
           
     - name: Switch Cluster if Prod
