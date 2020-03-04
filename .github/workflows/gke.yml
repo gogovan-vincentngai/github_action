@@ -49,9 +49,13 @@ jobs:
         service_account_key: ${{ secrets.MASTER_GOOGLE_APPLICATION_CREDENTIALS }} 
         export_default_credentials: true
       
-    - name: Login GKE
+    - name: Get GKE
       run: |
         gcloud auth configure-docker 
         gcloud info   
+        
+    - name: Get Cluster 
+      run: |
+        kubectl get ns
         
     
