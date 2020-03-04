@@ -52,7 +52,8 @@ jobs:
     - name: Get GKE
       run: |
         gcloud auth configure-docker 
-        gcloud info   
+        gcloud info
+        gcloud container clusters get-credentials $GKE_CLUSTER --region $GKE_REGION --project $GKE_PROJECT   
         
     - name: Get Cluster 
       run: |
