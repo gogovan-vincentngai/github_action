@@ -73,9 +73,9 @@ jobs:
         kubectl get ns
         kubectl cluster-info
 
-    - name: Insert Secert
-      run: |
-        kubectl create secret docker-registry vincentkey --docker-server=docker.io --docker-username=${{ secrets.DOCKER_HUB_USER }}  --docker-password=${{ secrets.DOCKER_HUB_PASSWORD }}  --docker-email=${{ secrets.DOCKER_HUB_EMAIL }} --namespace $DEPLOY_NAMESPACE
+    #- name: Insert Secert
+    #  run: |
+    #    kubectl create secret docker-registry vincentkey --docker-server=docker.io --docker-username=${{ secrets.DOCKER_HUB_USER }}  --docker-password=${{ secrets.DOCKER_HUB_PASSWORD }}  --docker-email=${{ secrets.DOCKER_HUB_EMAIL }} --namespace $DEPLOY_NAMESPACE
 
     - name: Deploy 
       run: |
