@@ -76,10 +76,10 @@ jobs:
     - name: Create Namespace if not have
       run: |
         cat << EOF | kubectl apply -f -
-          apiVersion: v1
-          kind: Namespace
-          metadata:
-          name: $DEPLOY_NAMESPACE
+        apiVersion: v1
+        kind: Namespace
+        metadata:
+          name: vincent
         EOF
 
     - name: Insert Secert
