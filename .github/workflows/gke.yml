@@ -50,6 +50,7 @@ jobs:
         export_default_credentials: true
       
     - name: Login GKE
+      run: |
         gcloud auth configure-docker 
         gcloud info   
         
