@@ -14,6 +14,7 @@ jobs:
     
     if: github.ref == 'refs/heads/master'
     env:
+      CLOUDSDK_PYTHON_SITEPACKAGES: 1
       GKE_PROJECT: ${{ secrets.MASTER_GKE_PROJECT }}
       GKE_CLUSTER: ${{ secrets.MASTER_GKE_CLUSTER }}
       GKE_REGION: ${{ secrets.MASTER_GKE_REGION }}
@@ -23,6 +24,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: install python-openssl
+      run: sudo apt-get install -y python-openssl -o=Dpkg::Use-Pty=0
+      
     - name: Checkout
       uses: actions/checkout@v2    
 
