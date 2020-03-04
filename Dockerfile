@@ -10,8 +10,8 @@
 # implied. See the License for the specific language governing permissions and limitations under the
 # License.
 
-FROM nginx
-COPY ./index.html /usr/share/nginx/html
+FROM nginx:stable
+#COPY ./index.html /usr/share/nginx/html
 #COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 #WORKDIR /usr/share/nginx/html
