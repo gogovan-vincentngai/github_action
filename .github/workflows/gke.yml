@@ -9,6 +9,7 @@ on:
 
 env:
   IMAGE: test
+  DEPLOY_NAMESPACE: vincent2
 
 jobs:
   build:
@@ -27,8 +28,7 @@ jobs:
           echo "::set-env name=GKE_PROJECT::${{ secrets.DEV_GKE_PROJECT }}"
           echo "::set-env name=GKE_CLUSTER::${{ secrets.DEV_GKE_CLUSTER }}"
           echo "::set-env name=GKE_REGION::${{ secrets.DEV_GKE_REGION }}"
-        
-          
+                 
     - name: Switch Cluster if Prod
       uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
       if: github.ref == 'refs/heads/master'
@@ -46,7 +46,22 @@ jobs:
         service_account_email: ${{ secrets.MASTER_SA_EMAIL }} 
         service_account_key: ${{ secrets.MASTER_GOOGLE_APPLICATION_CREDENTIALS }} 
         export_default_credentials: true
-  
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Docker Build
+      run: |
+        docker login -u ${{ secrets.DOCKER_HUB_USER }} -p ${{ secrets.DOCKER_HUB_PASSWORD}}
+        docker build -t vincentngai86/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA \
+          --build-arg GITHUB_SHA="$GITHUB_SHA" \
+          --build-arg GITHUB_REF="$GITHUB_REF" .
+        docker push vincentngai86/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA
+      
+    - name: sed
+      run: |
+        sed -ie "s/   image:.*/   image: vincentngai86\/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA/g" deployment.yaml
+
     - name: Get GKE
       run: |
         gcloud auth configure-docker 
@@ -57,7 +72,25 @@ jobs:
       run: |
         kubectl get ns
         kubectl cluster-info
+        
+    - name: Create Namespace if not have
+      run: |
+        cat << EOF | kubectl apply -f -
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+          name: $DEPLOY_NAMESPACE
+        EOF
 
+    - name: Insert Secert
+      run: |
+        kubectl create secret docker-registry ggvdockerhub \
+        --docker-server=docker.io \
+        --docker-username=$DOCKER_HUB_USER \
+        --docker-password=$DOCKER_HUB_PASSWORD \
+        --docker-email=$DOCKER_HUB_EMAIL \
+        --namespace $DEPLOY_NAMESPACE
 
-    
-    
+    - name: Deploy 
+      run: |
+        kubectl apply -f deployment.yaml -n $DEPLOY_NAMESPACE
