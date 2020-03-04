@@ -48,7 +48,7 @@ jobs:
         service_account_key: ${{ secrets.MASTER_GOOGLE_APPLICATION_CREDENTIALS }} 
         export_default_credentials: true
       
-    - run: |
+    - name: Login GKE
         gcloud auth configure-docker 
         gcloud info   
         
