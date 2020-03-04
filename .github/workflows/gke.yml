@@ -27,7 +27,7 @@ jobs:
 
     # Configure docker login
     - run: |
-        docker login -u ${{ secrets.DOCKER_HUB_USER }} -p ${{ secrets.DOCKER_HUB_PASSWORD}}
+        docker login -u vincentngai86 -p ${{ secrets.DOCKER_HUB_PASSWORD}}
 
     # Build the Docker image
     - name: Build
