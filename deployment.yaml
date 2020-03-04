@@ -24,3 +24,5 @@ spec:
             cpu: 100m
           limits:
             cpu: 100m
+      imagePullSecrets:
+        - name: vincentkey
