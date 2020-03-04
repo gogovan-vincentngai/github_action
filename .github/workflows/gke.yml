@@ -14,6 +14,7 @@ jobs:
     runs-on: [ubuntu-latest]
     steps:
     - name: Export ENV Prod
+      run: echo hellow
       if: github.ref == 'refs/heads/master'
       env:
         CLOUDSDK_PYTHON_SITEPACKAGES: 1
@@ -22,6 +23,7 @@ jobs:
         GKE_REGION: ${{ secrets.MASTER_GKE_REGION }}
       
     - name: Export ENV Dev
+      run: echo hellow
       if: github.ref == 'refs/heads/develop'
       env:
         CLOUDSDK_PYTHON_SITEPACKAGES: 1
