@@ -48,7 +48,6 @@ jobs:
 
     - name: Deploy Helm
       run: |
-        kubectl apply -f deployment.yaml -n $DEPLOY_NAMESPACE
         curl -o helm.gz https://get.helm.sh/helm-v2.13.1-linux-amd64.tar.gz
         tar -zxvf helm.gz
         cp linux-amd64/helm /usr/local/bin
