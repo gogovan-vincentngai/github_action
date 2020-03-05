@@ -54,5 +54,5 @@ jobs:
       run: |
         curl -o helm.gz https://get.helm.sh/helm-v2.13.1-linux-amd64.tar.gz
         tar -zxvf helm.gz
-        cp linux-amd64/helm /usr/local/bin
+        sudo cp linux-amd64/helm /usr/local/bin
         helm version
