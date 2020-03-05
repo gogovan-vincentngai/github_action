@@ -9,6 +9,7 @@ on:
 env:
   IMAGE: test
   DEPLOY_NAMESPACE: vincent
+  APPLICATION_NAME: nginx-test
 
 jobs:
   build:
@@ -56,4 +57,34 @@ jobs:
         tar -zxvf helm.gz
         sudo cp linux-amd64/helm /usr/local/bin
         helm version
-        helm list --tiller-namespace helm-tiller
+
+    - name: Checkout Source Code
+      uses: actions/checkout@v2
+    
+    - name: Checkout K8S Deployment repo
+      uses: actions/checkout@master
+      with:
+       repository: gogovan/k8s-deployments.git
+       token: ${{ secrets.GITHUB_DEVOPS_TOKEN }}
+       path: k8sdeployment
+
+    - name: Check Folder
+      run: |
+       ls -la k8sdeployment
+       
+    - name: Docker Build and Push
+      run: |
+        docker login -u ${{ secrets.DOCKER_HUB_USER }} -p ${{ secrets.DOCKER_HUB_PASSWORD}}
+        docker build -t vincentngai86/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA \
+          --build-arg GITHUB_SHA="$GITHUB_SHA" \
+          --build-arg GITHUB_REF="$GITHUB_REF" .
+        docker push vincentngai86/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA
+      
+    - name: Modify Docker Image
+      run: |
+				sed -ie "s/   tag:.*/   tag: $GKE_PROJECT-$IMAGE-$GITHUB_SHA/g" k8sdeployment/nginx-test/values.yaml
+        
+    - name: Application Deploy
+      run: |
+				cd k8sdeployment/nginx-test/
+        helm upgrade --install $APPLICATION_NAME -f values.yaml --namespace $DEPLOY_NAMESPACE --till-namespace helm-tiller .
