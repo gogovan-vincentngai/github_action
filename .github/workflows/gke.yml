@@ -56,3 +56,4 @@ jobs:
         tar -zxvf helm.gz
         sudo cp linux-amd64/helm /usr/local/bin
         helm version
+        helm list --tiller-namespace helm-tiller
