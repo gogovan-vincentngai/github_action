@@ -82,7 +82,8 @@ jobs:
       
     - name: Modify Docker Image
       run: |
-       sed -ie "s/   tag:.*/   tag: $GKE_PROJECT-$IMAGE-$GITHUB_SHA/g" k8sdeployment/nginx-test/values.yaml
+       sed -ie "s/^  tag: .*/  tag: $GKE_PROJECT-$IMAGE-$GITHUB_SHA/g" k8sdeployment/nginx-test/values.yaml
+       cat k8sdeployment/nginx-test/values.yaml
         
     - name: Application Deploy
       run: |
