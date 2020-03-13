@@ -14,6 +14,9 @@ env:
 jobs:
   build:
     runs-on: [ubuntu-latest]
+    strategy:
+      matrix:
+        country: [hk,sg]
     steps:
     - name: Export ENV for Prod
       if: contains(github.ref, 'refs/heads/master')
@@ -88,4 +91,4 @@ jobs:
     - name: Application Deploy
       run: |
        cd k8sdeployment/nginx-test/
-       helm upgrade --install $APPLICATION_NAME -f values.yaml --namespace $DEPLOY_NAMESPACE --tiller-namespace helm-tiller .
+       helm upgrade --install $APPLICATION_NAME-${{ matrix.country }} -f values.yaml --namespace $DEPLOY_NAMESPACE --tiller-namespace helm-tiller .
