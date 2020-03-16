@@ -20,6 +20,7 @@ jobs:
         for s in $(curl -s --header "X-Vault-Token: $MASTER_VAUTL_TOKEN" https://$MASTER_VAULT_SERVER/$MASTER_VAULT_PATH | jq -r ".data|to_entries|map(\"\(.key)"::"\(.value|tostring)\")|.[]"); do
         echo "::add-mask::$s"
         echo "::set-env name=$s"
+        echo $s
         done
         printenv
     - name: Print Env var
