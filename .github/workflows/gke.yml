@@ -15,11 +15,10 @@ jobs:
           echo "::set-env name=MASTER_VAULT_SERVER::${{ secrets.MASTER_VAULT_SERVER }}"
           echo "::set-env name=MASTER_VAULT_PATH::${{ secrets.MASTER_VAULT_PATH }}"
           echo "::set-env name=MASTER_VAUTL_TOKEN::${{ secrets.MASTER_VAUTL_TOKEN }}"
-
     - name: Export ENV Var from vault
       run: |
-        for s in $(curl -s --header "X-Vault-Token: afa27e11-5b83-c40a-b74b-78c5b7bdffad" https://vault.gogo.tech:8200/v1/gogotech/gogovan-server/qa/github_action_deploy | jq -r ".data|to_entries|map(\"\(.key)=\(.value|tostring)\")|.[]"); do
-          export $s
+        for s in $(curl -s --header "X-Vault-Token: $MASTER_VAUTL_TOKEN" https://$MASTER_VAULT_SERVER/$MASTER_VAULT_PATH | jq -r ".data|to_entries|map(\"\(.key)="::"\(.value|tostring)\")|.[]"); do
+          echo "::set-env name=$(export $s)
         done
     - name: Print Env var
       run: |
