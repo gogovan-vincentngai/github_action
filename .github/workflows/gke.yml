@@ -20,6 +20,7 @@ jobs:
     - name: Export from vault-action
       uses: RichiCoder1/vault-action
       with:
+        kv-version: 1
         url: https://$VAULT_SERVER
         token: $VAUTL_TOKEN
         secrets: |
