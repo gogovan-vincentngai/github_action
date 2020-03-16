@@ -18,12 +18,4 @@ jobs:
 
     - name: Export ENV Var from vault
       run: |
-        printenv
-        TEMP=$(curl -s --header "X-Vault-Token: $MASTER_VAUTL_TOKEN" --request GET  https://$MASTER_VAULT_SERVER/$MASTER_VAULT_PATH |jq -r  '.data| to_entries[] |.key+"="+.value')
-        for key in $TEMP;
-        do
-         K=$(echo $key|cut -d ':' -f 1)
-         V=$(echo $key|cut -d ':' -f 2-)
-         export $K=$V
-        done
-        printenv
+        curl -s --header "X-Vault-Token: $MASTER_VAUTL_TOKEN" --request GET  https://$MASTER_VAULT_SERVER/$MASTER_VAULT_PATH |jq -r  '.data| to_entries[] |.key+"="+.value'
