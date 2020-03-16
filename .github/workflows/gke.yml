@@ -12,16 +12,16 @@ jobs:
     - name: Export ENV for Prod
       if: contains(github.ref, 'refs/heads/master')
       run: |
-          echo "::set-env name=MASTER_VAULT_SERVER::${{ secrets.MASTER_VAULT_SERVER }}"
-          echo "::set-env name=MASTER_VAULT_PATH::${{ secrets.MASTER_VAULT_PATH }}"
-          echo "::set-env name=MASTER_VAUTL_TOKEN::${{ secrets.MASTER_VAUTL_TOKEN }}"
-    - name: Export ENV Var from vault
-      run: |
-        for s in $(curl -s --header "X-Vault-Token: $MASTER_VAUTL_TOKEN" https://$MASTER_VAULT_SERVER/$MASTER_VAULT_PATH | jq -r ".data|to_entries|map(\"\(.key)"::"\(.value|tostring)\")|.[]"); do
-        echo "::set-env name=$s"
-        done
-        printenv
-    - name: Print Env var
-      run: |
-          echo 1 - $TEST1
-          echo 2 - $TEST2
+          echo "::set-env name=VAULT_SERVER::${{ secrets.MASTER_VAULT_SERVER }}"
+          echo "::set-env name=VAULT_PATH::${{ secrets.MASTER_VAULT_PATH }}"
+          echo "::set-env name=VAUTL_TOKEN::${{ secrets.MASTER_VAUTL_TOKEN }}"
+          echo "::set-env name=MYENV::master
+    
+    - name: Export from vault-action
+      uses: RichiCoder1/vault-action
+      with:
+        url: https://$MASTER_VAULT_SERVER
+        token: $VAUTL_TOKEN
+        secrets: |
+            $VAULT_PATH TEST1 | T001 ;
+            $VAULT_PATH TEST2 | T002 ;
