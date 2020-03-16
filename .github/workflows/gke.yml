@@ -18,11 +18,14 @@ jobs:
     - name: Export ENV Var from vault
       run: |
         for s in $(curl -s --header "X-Vault-Token: $MASTER_VAUTL_TOKEN" https://$MASTER_VAULT_SERVER/$MASTER_VAULT_PATH | jq -r ".data|to_entries|map(\"\(.key)"::"\(.value|tostring)\")|.[]"); do
-        echo "::add-mask::$s"
+        K=$(echo $s | cut -d ':' -f 1)
+        V=$(echo $s | cut -d ':' -f 3-)
+        echo Phase 1 $K $V
+        echo "::add-mask::$K"
+        echo "::add-mask::$V"
         echo "::set-env name=$s"
-        echo $s
+        echo Phase 2 $K $V
         done
-        printenv
     - name: Print Env var
       run: |
           echo 1 - $TEST1
