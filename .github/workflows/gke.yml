@@ -18,4 +18,10 @@ jobs:
 
     - name: Export ENV Var from vault
       run: |
-        curl -s --header "X-Vault-Token: $MASTER_VAUTL_TOKEN" --request GET  https://$MASTER_VAULT_SERVER/$MASTER_VAULT_PATH |jq -r  '.data| to_entries[] |.key+"="+.value'
+        for s in $(curl -s --header "X-Vault-Token: afa27e11-5b83-c40a-b74b-78c5b7bdffad" https://vault.gogo.tech:8200/v1/gogotech/gogovan-server/qa/github_action_deploy | jq -r ".data|to_entries|map(\"\(.key)=\(.value|tostring)\")|.[]"); do
+          export $s
+        done
+    - name: Print Env var
+      run: |
+          echo 1 - $TEST1
+          echo 2 - $TEST2
