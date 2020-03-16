@@ -3,92 +3,27 @@ name: Build and Deploy to GKE
 on:
   push:
     branches:
-    - develop
     - master
-
-env:
-  IMAGE: test
-  DEPLOY_NAMESPACE: vincent
-  APPLICATION_NAME: nginx-test
 
 jobs:
   build:
     runs-on: [ubuntu-latest]
-    strategy:
-      matrix:
-        country: [hk,sg]
     steps:
     - name: Export ENV for Prod
       if: contains(github.ref, 'refs/heads/master')
       run: |
-          echo "::set-env name=GKE_PROJECT::${{ secrets.MASTER_GKE_PROJECT }}"
-          echo "::set-env name=GKE_CLUSTER::${{ secrets.MASTER_GKE_CLUSTER }}"
-          echo "::set-env name=GKE_REGION::${{ secrets.MASTER_GKE_REGION }}"
+          echo "::set-env name=MASTER_VAULT_SERVER::${{ secrets.MASTER_VAULT_SERVER }}"
+          echo "::set-env name=MASTER_VAULT_PATH::${{ secrets.MASTER_VAULT_PATH }}"
+          echo "::set-env name=MASTER_VAUTL_TOKEN::${{ secrets.MASTER_VAUTL_TOKEN }}"
 
-    - name: Export ENV for DEV
-      if: contains(github.ref, 'refs/heads/develop')
+    - name: Export ENV Var from vault
       run: |
-          echo "::set-env name=GKE_PROJECT::${{ secrets.DEV_GKE_PROJECT }}"
-          echo "::set-env name=GKE_CLUSTER::${{ secrets.DEV_GKE_CLUSTER }}"
-          echo "::set-env name=GKE_REGION::${{ secrets.DEV_GKE_REGION }}"
-                 
-    - name: Switch Cluster if Branch is Master
-      uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
-      if: github.ref == 'refs/heads/master'
-      with:
-        version: '270.0.0'
-        service_account_email: ${{ secrets.MASTER_SA_EMAIL }} 
-        service_account_key: ${{ secrets.MASTER_GOOGLE_APPLICATION_CREDENTIALS }} 
-        export_default_credentials: true
-
-    - name: Switch Cluster if Branch is develop
-      uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
-      if: github.ref == 'refs/heads/develop'
-      with:
-        version: '270.0.0'
-        service_account_email: ${{ secrets.MASTER_SA_EMAIL }} 
-        service_account_key: ${{ secrets.MASTER_GOOGLE_APPLICATION_CREDENTIALS }} 
-        export_default_credentials: true
-
-    - name: Get Auth to GKE
-      run: |
-        gcloud container clusters get-credentials $GKE_CLUSTER --region $GKE_REGION --project $GKE_PROJECT   
-        
-    - name: Deploy Helm
-      run: |
-        curl -o helm.gz https://get.helm.sh/helm-v2.13.1-linux-amd64.tar.gz
-        tar -zxvf helm.gz
-        sudo cp linux-amd64/helm /usr/local/bin
-        helm version
-
-    - name: Checkout Source Code
-      uses: actions/checkout@v2
-    
-    - name: Checkout K8S Deployment repo
-      uses: actions/checkout@master
-      with:
-       repository: gogovan/k8s-deployments.git
-       token: ${{ secrets.GITHUB_DEVOPS_TOKEN }}
-       path: k8sdeployment
-
-    - name: Check Folder
-      run: |
-       ls -la k8sdeployment
-       
-    - name: Docker Build and Push
-      run: |
-        docker login -u ${{ secrets.DOCKER_HUB_USER }} -p ${{ secrets.DOCKER_HUB_PASSWORD}}
-        docker build -t vincentngai86/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA \
-          --build-arg GITHUB_SHA="$GITHUB_SHA" \
-          --build-arg GITHUB_REF="$GITHUB_REF" .
-        docker push vincentngai86/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA
-      
-    - name: Modify Docker Image
-      run: |
-       sed -ie "s/^  tag: .*/  tag: $GKE_PROJECT-$IMAGE-$GITHUB_SHA/g" k8sdeployment/nginx-test/values.yaml
-       cat k8sdeployment/nginx-test/values.yaml
-        
-    - name: Application Deploy
-      run: |
-       cd k8sdeployment/nginx-test/
-       helm upgrade --install $APPLICATION_NAME-${{ matrix.country }} -f values.yaml --namespace $DEPLOY_NAMESPACE --tiller-namespace helm-tiller .
+        printenv
+        TEMP=$(curl -s --header "X-Vault-Token: $MASTER_VAUTL_TOKEN" --request GET  https://$MASTER_VAULT_SERVER/$MASTER_VAULT_PATH |jq -r  '.data| to_entries[] |.key+"="+.value')
+        for key in $TEMP;
+        do
+         K=$(echo $key|cut -d ':' -f 1)
+         V=$(echo $key|cut -d ':' -f 2-)
+         export $K=$V
+        done
+        printenv
