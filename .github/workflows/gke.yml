@@ -18,9 +18,7 @@ jobs:
     - name: Export ENV Var from vault
       run: |
         for s in $(curl -s --header "X-Vault-Token: $MASTER_VAUTL_TOKEN" https://$MASTER_VAULT_SERVER/$MASTER_VAULT_PATH | jq -r ".data|to_entries|map(\"\(.key)="::"\(.value|tostring)\")|.[]"); do
-         TEMP=$(export $s)
-          #echo "::set-env name=$(export $s)"
-         echo $TEMP
+        echo "::set-env name=$s"
         done
         printenv
     - name: Print Env var
