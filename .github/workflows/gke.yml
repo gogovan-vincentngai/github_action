@@ -27,13 +27,16 @@ jobs:
         for s in $(curl -s --header "X-Vault-Token: $VAUTL_TOKEN" https://$VAULT_SERVER/$VAULT_PATH | jq -r ".data|to_entries|map(\"\(.key)"::"\(.value|tostring)\")|.[]"); do
         K=$(echo $s | cut -d ':' -f 1)
         V=$(echo $s | cut -d ':' -f 3-)
-        echo Phase 1 $K $V
+        echo Before Masked $K $V
         echo "::add-mask::$K"
         echo "::add-mask::$V"
         echo "::set-env name=$s"
-        echo Phase 2 $K $V
+        echo After Masked $K $V
         done
     - name: Print Env var
       run: |
           echo 1 - $TEST1
           echo 2 - $TEST2
+          echo 3 - $TEST3
+          echo 4 - $TEST4
+
