@@ -20,7 +20,7 @@ jobs:
     - name: Export from vault-action
       uses: RichiCoder1/vault-action
       with:
-        url: https://$MASTER_VAULT_SERVER
+        url: https://$VAULT_SERVER
         token: $VAUTL_TOKEN
         secrets: |
             $VAULT_PATH TEST1 | T001 ;
