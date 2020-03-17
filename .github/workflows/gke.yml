@@ -14,6 +14,6 @@ jobs:
     steps:
     - name: Export ENV Var from vault
       run: |
-        for c in $COUNTRY do
+        for c in $COUNTRY; do
           echo $c
         done
