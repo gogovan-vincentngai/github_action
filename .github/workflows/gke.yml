@@ -40,4 +40,3 @@ jobs:
           echo 3 - $TEST3
           echo 4 - $TEST4
           echo 5 - $TEST5
-
