@@ -5,38 +5,15 @@ on:
     branches:
     - develop
     - master
+env:
+  COUNTRY: HK SG TW
 
 jobs:
   build:
     runs-on: [ubuntu-latest]
     steps:
-    - name: Export ENV for DEV
-      if: contains(github.ref, 'refs/heads/develop')
-      run: |
-          echo "::set-env name=VAULT_SERVER::${{ secrets.DEV_VAULT_SERVER }}"
-          echo "::set-env name=VAULT_PATH::${{ secrets.DEV_VAULT_PATH }}"
-          echo "::set-env name=VAUTL_TOKEN::${{ secrets.DEV_VAUTL_TOKEN }}"
-    - name: Export ENV for Prod
-      if: contains(github.ref, 'refs/heads/master')
-      run: |
-          echo "::set-env name=VAULT_SERVER::${{ secrets.MASTER_VAULT_SERVER }}"
-          echo "::set-env name=VAULT_PATH::${{ secrets.MASTER_VAULT_PATH }}"
-          echo "::set-env name=VAUTL_TOKEN::${{ secrets.MASTER_VAUTL_TOKEN }}"
     - name: Export ENV Var from vault
       run: |
-        for s in $(curl -s --header "X-Vault-Token: $VAUTL_TOKEN" https://$VAULT_SERVER/$VAULT_PATH | jq -r ".data|to_entries|map(\"\(.key)"::"\(.value|tostring)\")|.[]"); do
-        K=$(echo $s | cut -d ':' -f 1)
-        V=$(echo $s | cut -d ':' -f 3-)
-        echo Before Masked $K $V
-        echo "::add-mask::$K"
-        echo "::add-mask::$V"
-        echo "::set-env name=$s"
-        echo After Masked $K $V
+        for c in $COUNTRY do
+          echo $c
         done
-    - name: Print Env var
-      run: |
-          echo 1 - $TEST1
-          echo 2 - $TEST2
-          echo 3 - $TEST3
-          echo 4 - $TEST4
-          echo 5 - $TEST5
