@@ -71,14 +71,14 @@ jobs:
     - name: Docker Build and Push
       run: |
         docker login -u ${{ secrets.DOCKER_HUB_USER }} -p ${{ secrets.DOCKER_HUB_PASSWORD}}
-        docker build -t vincentngai86/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA \
+        docker build -t vincentngai86/github_action:$APPLICATION_NAME-$GITHUB_SHA \
           --build-arg GITHUB_SHA="$GITHUB_SHA" \
           --build-arg GITHUB_REF="$GITHUB_REF" .
-        docker push vincentngai86/github_action:$GKE_PROJECT-$IMAGE-$GITHUB_SHA
+        docker push vincentngai86/github_action:$APPLICATION_NAME-$GITHUB_SHA
       
     - name: Modify Docker Image
       run: |
-       sed -ie "s/^  tag: .*/  tag: $GKE_PROJECT-$IMAGE-$GITHUB_SHA/g" k8sdeployment/nginx-test/values.yaml
+       sed -ie "s/^  tag: .*/  tag: $APPLICATION_NAME-$GITHUB_SHA/g" k8sdeployment/nginx-test/values.yaml
        cat k8sdeployment/nginx-test/values.yaml
         
     - name: Application Deploy
