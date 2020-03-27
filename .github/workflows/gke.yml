@@ -33,11 +33,9 @@ jobs:
         for s in $(curl -s --header "X-Vault-Token: $VAUTL_TOKEN" https://$VAULT_SERVER/$VAULT_PATH | jq -r ".data|to_entries|map(\"\(.key)"::"\(.value|tostring)\")|.[]"); do
         K=$(echo $s | cut -d ':' -f 1)
         V=$(echo $s | cut -d ':' -f 3-)
-        echo Before Masked $K $V
         echo "::add-mask::$K"
         echo "::add-mask::$V"
         echo "::set-env name=$s"
-        echo After Masked $K $V
         done
         
     - name: Switch Cluster if Branch is Master
@@ -49,18 +47,9 @@ jobs:
         service_account_key: ${{ secrets.MASTER_GOOGLE_APPLICATION_CREDENTIALS }} 
         export_default_credentials: true
 
-    - name: Switch Cluster if Branch is develop
-      uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
-      if: github.ref == 'refs/heads/develop'
-      with:
-        version: '270.0.0'
-        service_account_email: ${{ secrets.MASTER_SA_EMAIL }} 
-        service_account_key: ${{ secrets.MASTER_GOOGLE_APPLICATION_CREDENTIALS }} 
-        export_default_credentials: true
-
     - name: Get Auth to GKE
       run: |
-        gcloud container clusters get-credentials $GKE_CLUSTER --region $GKE_REGION --project $GKE_PROJECT   
+        gcloud container clusters get-credentials $MASTER_GKE_CLUSTER --region $MASTER_GKE_REGION --project $MASTER_GKE_PROJECT   
         
     - name: Deploy Helm
       run: |
