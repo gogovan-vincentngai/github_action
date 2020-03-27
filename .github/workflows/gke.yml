@@ -8,7 +8,7 @@ on:
 env:
   APPLICATION_NAME: nginx-test
   DEPLOY_NAMESPACE: vincent
-  COUNTRY: HK SG TW
+  COUNTRY: hk sg tw
 
 jobs:
   build:
