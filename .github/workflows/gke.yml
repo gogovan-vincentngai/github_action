@@ -49,7 +49,7 @@ jobs:
 
     - name: Get Auth to GKE
       run: |
-        gcloud container clusters get-credentials $MASTER_GKE_CLUSTER --region $MASTER_GKE_REGION --project $MASTER_GKE_PROJECT   
+        gcloud container clusters get-credentials ${{ secrets.MASTER_GKE_CLUSTER }} --region ${{ secrets.MASTER_GKE_REGION }} --project ${{ secrets.MASTER_GKE_PROJECT}}   
         
     - name: Deploy Helm
       run: |
