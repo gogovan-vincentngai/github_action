@@ -61,29 +61,18 @@ jobs:
     - name: Checkout Source Code
       uses: actions/checkout@v2
     
-    - name: Checkout K8S Deployment repo
-      uses: actions/checkout@master
+    - name: Checkout Application Deployment repo
+      uses: actions/checkout@deployment-dev
       with:
-       repository: gogovan/k8s-deployments.git
+       repository: gogovan/gogovan-server.git
        token: ${{ secrets.GITHUB_DEVOPS_TOKEN }}
-       path: k8sdeployment
+       path: gogovan-server
        
     - name: Docker Build and Push
       run: |
+        cd gogovan-server
         docker login -u ${{ secrets.DOCKER_HUB_USER }} -p ${{ secrets.DOCKER_HUB_PASSWORD}}
         docker build -t vincentngai86/github_action:$APPLICATION_NAME-$GITHUB_SHA \
           --build-arg GITHUB_SHA="$GITHUB_SHA" \
           --build-arg GITHUB_REF="$GITHUB_REF" .
         docker push vincentngai86/github_action:$APPLICATION_NAME-$GITHUB_SHA
-      
-    - name: Modify Docker Image
-      run: |
-       sed -ie "s/^  tag: .*/  tag: $APPLICATION_NAME-$GITHUB_SHA/g" k8sdeployment/nginx-test/values.yaml
-       cat k8sdeployment/nginx-test/values.yaml
-        
-    - name: Application Deploy
-      run: |
-       cd k8sdeployment/nginx-test/
-       for c in $COUNTRY; do
-        helm upgrade --install $APPLICATION_NAME-$c -f values.yaml --namespace $DEPLOY_NAMESPACE --tiller-namespace helm-tiller .
-       done
