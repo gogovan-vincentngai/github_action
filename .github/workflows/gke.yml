@@ -62,8 +62,9 @@ jobs:
       uses: actions/checkout@v2
     
     - name: Checkout Application Deployment repo
-      uses: actions/checkout@deployment-dev
+      uses: actions/checkout@master
       with:
+       ref: deployment-dev
        repository: gogovan/gogovan-server.git
        token: ${{ secrets.GITHUB_DEVOPS_TOKEN }}
        path: gogovan-server
@@ -76,3 +77,4 @@ jobs:
           --build-arg GITHUB_SHA="$GITHUB_SHA" \
           --build-arg GITHUB_REF="$GITHUB_REF" .
         docker push vincentngai86/github_action:$APPLICATION_NAME-$GITHUB_SHA
+
